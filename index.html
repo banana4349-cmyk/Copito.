@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carta para mi niña</title>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Lora:ital,wght@0,400;0,700;1,400&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+  :root {
+    --dark-red: #7a0c0c;
+    --mid-red: #9b1a1a;
+    --light-cream: #f5e6d0;
+    --warm-cream: #f0d9b5;
+    --dark-brown: #3a1a1a;
+    --gold: #c9a84c;
+  }
+ 
+  body {
+    background-color: var(--dark-red);
+    font-family: 'Lora', serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+ 
+  /* ─── MUSIC PLAYER ─── */
+  #music-player {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 999;
+    background: rgba(58,26,26,0.92);
+    border: 2px solid var(--gold);
+    border-radius: 40px;
+    padding: 8px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  }
+  #music-player button {
+    background: var(--gold);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dark-brown);
+    transition: transform 0.15s;
+  }
+  #music-player button:hover { transform: scale(1.1); }
+  #music-player .music-label {
+    font-family: 'Fredoka One', cursive;
+    color: var(--warm-cream);
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  #music-player .note-anim {
+    font-size: 18px;
+    animation: floatnote 1.5s infinite ease-in-out;
+  }
+  @keyframes floatnote {
+    0%,100% { transform: translateY(0) rotate(-10deg); }
+    50% { transform: translateY(-6px) rotate(10deg); }
+  }
+  audio { display: none; }
+ 
+  /* ─── HERO ─── */
+  .hero {
+    background: var(--dark-red);
+    text-align: center;
+    padding: 80px 20px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero h1 {
+    font-family: 'Creepster', cursive;
+    font-size: clamp(2.8rem, 8vw, 6rem);
+    color: var(--warm-cream);
+    letter-spacing: 4px;
+    text-shadow: 3px 3px 0 var(--dark-brown), 6px 6px 12px rgba(0,0,0,0.6);
+    animation: pulse-title 3s infinite ease-in-out;
+  }
+  @keyframes pulse-title {
+    0%,100% { text-shadow: 3px 3px 0 var(--dark-brown), 0 0 20px rgba(201,168,76,0.3); }
+    50% { text-shadow: 3px 3px 0 var(--dark-brown), 0 0 40px rgba(201,168,76,0.7); }
+  }
+  .hero-heart {
+    font-size: 3rem;
+    color: #e74c4c;
+    display: inline-block;
+    animation: heartbeat 1.2s infinite;
+  }
+  @keyframes heartbeat {
+    0%,100% { transform: scale(1); }
+    14% { transform: scale(1.3); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.15); }
+    56% { transform: scale(1); }
+  }
+ 
+  /* ─── SECTION CARDS ─── */
+  .section {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  .card {
+    background: var(--mid-red);
+    border-radius: 18px;
+    padding: 36px 40px;
+    position: relative;
+    border: 3px solid rgba(201,168,76,0.3);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    margin-bottom: 40px;
+  }
+  .card h2 {
+    font-family: 'Creepster', cursive;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    color: var(--warm-cream);
+    letter-spacing: 3px;
+    margin-bottom: 24px;
+    text-shadow: 2px 2px 0 var(--dark-brown);
+  }
+  .card-inner {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .card-text {
+    flex: 1;
+    min-width: 200px;
+    background: var(--light-cream);
+    border-radius: 4px;
+    padding: 20px 22px;
+    font-size: 0.93rem;
+    line-height: 1.75;
+    color: var(--dark-brown);
+    font-family: 'Lora', serif;
+    border: 1px solid #d4b896;
+    position: relative;
+  }
+  .card-text::before {
+    content: '';
+    position: absolute;
+    top: 4px; left: 4px; right: -4px; bottom: -4px;
+    background: rgba(0,0,0,0.15);
+    border-radius: 4px;
+    z-index: -1;
+  }
+  .placeholder-text {
+    font-style: italic;
+    color: #8a6a4a;
+    font-size: 0.82rem;
+    margin-top: 8px;
+    opacity: 0.7;
+  }
+ 
+  /* ─── PHOTO SLIDESHOW ─── */
+  .slideshow-wrap {
+    width: 180px;
+    min-width: 160px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .slideshow {
+    width: 180px;
+    height: 200px;
+    position: relative;
+    border: 4px solid white;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 4px 4px 16px rgba(0,0,0,0.5);
+    background: #555;
+  }
+  .slideshow img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  .slideshow img.active { opacity: 1; }
+  .slide-date {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.75rem;
+    color: var(--warm-cream);
+    text-align: center;
+    margin-top: 8px;
+    letter-spacing: 1px;
+  }
+  .polaroid-rotate-1 { transform: rotate(2deg); }
+  .polaroid-rotate-2 { transform: rotate(-2.5deg); }
+ 
+  .photo-notice {
+    background: rgba(245,230,208,0.12);
+    border: 1px dashed var(--gold);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    color: var(--warm-cream);
+    text-align: center;
+    opacity: 0.8;
+    margin-top: 6px;
+  }
+ 
+  /* ─── DECORATIVE DIVIDER ─── */
+  .divider {
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--gold);
+    margin: 10px 0 20px;
+    letter-spacing: 8px;
+    opacity: 0.6;
+  }
+ 
+  /* ══════════════════════════════
+     SNOOPY ANIMATIONS - SIEMPRE EN MOVIMIENTO
+  ══════════════════════════════ */
+  .snoopy-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 100;
+    overflow: hidden;
+  }
+ 
+  .snoopy {
+    position: absolute;
+    width: 110px;
+    mix-blend-mode: multiply;
+  }
+  .snoopy img { width: 100%; height: auto; }
+ 
+  /* Snoopy 1 – camina de izq. a der. por el fondo */
+  .snoopy-1 {
+    bottom: 0;
+    animation: walkBottom 18s linear infinite;
+  }
+  @keyframes walkBottom {
+    0%   { left: -130px;             transform: scaleX(1);  }
+    49%  { left: calc(100% + 130px); transform: scaleX(1);  }
+    50%  { left: calc(100% + 130px); transform: scaleX(-1); }
+    99%  { left: -130px;             transform: scaleX(-1); }
+    100% { left: -130px;             transform: scaleX(1);  }
+  }
+ 
+  /* Snoopy 2 (porras) – camina por la parte superior */
+  .snoopy-2 {
+    top: 60px;
+    animation: walkTop 22s linear infinite;
+    animation-delay: 4s;
+  }
+  @keyframes walkTop {
+    0%   { left: calc(100% + 130px); transform: scaleX(-1); }
+    49%  { left: -130px;             transform: scaleX(-1); }
+    50%  { left: -130px;             transform: scaleX(1);  }
+    99%  { left: calc(100% + 130px); transform: scaleX(1);  }
+    100% { left: calc(100% + 130px); transform: scaleX(-1); }
+  }
+ 
+  /* Snoopy 3 – camina por el medio */
+  .snoopy-3 {
+    top: 45%;
+    animation: walkMid 20s linear infinite;
+    animation-delay: 2s;
+  }
+  @keyframes walkMid {
+    0%   { left: -130px;             transform: scaleX(1);  }
+    49%  { left: calc(100% + 130px); transform: scaleX(1);  }
+    50%  { left: calc(100% + 130px); transform: scaleX(-1); }
+    99%  { left: -130px;             transform: scaleX(-1); }
+    100% { left: -130px;             transform: scaleX(1);  }
+  }
+ 
+  /* Snoopy 4 – vuela en diagonal */
+  .snoopy-4 {
+    animation: flyDiag 15s linear infinite;
+    animation-delay: 7s;
+  }
+  @keyframes flyDiag {
+    0%   { left: -130px;             top: 80%;  transform: scaleX(1)  rotate(0deg);  }
+    49%  { left: calc(100% + 130px); top: 10%;  transform: scaleX(1)  rotate(0deg);  }
+    50%  { left: calc(100% + 130px); top: 10%;  transform: scaleX(-1) rotate(0deg);  }
+    99%  { left: -130px;             top: 80%;  transform: scaleX(-1) rotate(0deg);  }
+    100% { left: -130px;             top: 80%;  transform: scaleX(1)  rotate(0deg);  }
+  }
+ 
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center;
+    padding: 40px 20px 120px;
+    font-family: 'Fredoka One', cursive;
+    color: var(--warm-cream);
+    font-size: 1.1rem;
+    opacity: 0.7;
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+ 
+<audio id="bg-audio" loop>
+  <source src="K. - Cigarettes After Sex.mp3" type="audio/mpeg">
+</audio>
+ 
+<!-- MUSIC PLAYER -->
+<div id="music-player">
+  <span class="note-anim">♪</span>
+  <span class="music-label">Musica</span>
+  <button id="play-btn" onclick="toggleMusic()">▶</button>
+</div>
+ 
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <h1>Carta<br> para mi niña</h1>
+  <div class="hero-heart">♥</div>
+</div>
+ 
+<!-- ═══ SECCIÓN 1 ═══ -->
+<div class="section">
+  <div class="card">
+    <h2>Mi esposa</h2>
+    <div class="card-inner">
+      <div class="card-text">
+        Queria hacerte este detalle para poder expresarme ya que desde ayer me he sentido rara, no es nada malo entre nosotras pero queria poder hablarlo contigo.
+        Llegue a sobrepensar sobre el tema de mi misma, me siento insuficiente y sobre todo me senti mas por el dia de hoy que ya despues te dire ya que me afecto mentalmente.
+        Pero queria decirte que de verdad hago todo mi esfuerzo para que estes comoda conmigo, trato de demostrarte lo mucho que te amo, lo mucho que te extraño y lo mucho que te necesito.
+        Eres la unica persona en la que pienso, me preocupo, amo y simplemente me gustaría poder seguir asi contigo, seguir en esta bonita relacion y que me permitas amarte, quererte y sobre todo cuidarte.
+        <div class="placeholder-text"></div>
+      </div>
+      <div class="slideshow-wrap polaroid-rotate-1">
+        <div class="slideshow" id="slide-1">
+          <img src="foto1.jpeg" alt="Foto 1" class="active">
+          <img src="foto2.jpeg" alt="Foto 2">
+        </div>
+        <div class="slide-date">Me encantas</div>
+        <div class="photo-notice">Amo cada foto de nosotras</div>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="divider">✦ ✦ ✦</div>
+ 
+  <!-- ═══ SECCIÓN 2 ═══ -->
+  <div class="card">
+    <h2>Amo a todo de ti</h2>
+    <div class="card-inner">
+      <div class="card-text">
+        Amor quiero agradecerte cada esfuerzo, detalle, palabras en la cual te tomas el tiempo de decirme o darme, como he dicho anteriormente no estoy acostumbrada a esos detalles.
+        Siempre te voy agradecer cada cosita que tu hagas pero me cuesta mucho aceptarlo, me sorprende que una persona me dedique tiempo de darme esos detallitos, cartitas, fotitos, dulces, etc.
+        Mi niña Sandy estoy completamente segura que eres el amor de mi vida, quiero poder intentarlo contigo y sobre todo tener esa vida que tanto anhelamos tu y yo.
+        Quiero decirte que eres muy bonita, muy hermosa, muy perfecta, todo lo que tiene que ver contigo es muy especial para mi, amo cada parte tuya aunque te cueste aceptarlo o sea dificil de creerlo.
+        Pero trato de poder demostrarte lo que eres para mi y quiero seguir haciendolo hasta que tu me lo permitas.
+        <div class="placeholder-text"></div>
+      </div>
+      <div class="slideshow-wrap polaroid-rotate-2">
+        <div class="slideshow" id="slide-2">
+          <img src="foto3.jpeg" alt="Foto 3" class="active">
+          <img src="foto4.jpeg" alt="Foto 4">
+        </div>
+        <div class="slide-date">Te amo</div>
+        <div class="photo-notice">Fotos de mi niña bonita</div>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="divider">✦ ✦ ✦</div>
+ 
+  <!-- ═══ SECCIÓN 3 ═══ -->
+  <div class="card">
+    <h2>Gracias mi niña copi</h2>
+    <div class="card-inner">
+      <div class="card-text">
+        Quiero decirte nuevamente que gracias por estos 4 meses magnificos, me has demostrado verdaderamente lo que es el amor y me gusta tener esta relacion contigo.
+        Todos los días siempre aprendo algo nuevo de esta relacion, pero lo que mas me sorprende es la paciencia que tienes ya que se que suelo ser muy desesperante debido a mis actitudes.
+        Obviamente estoy cambiando para bien, por el bien de esta relacion que quiero que dure para siempre mi niña.
+        Quiero seguir cumpliendo mas meses contigo, hasta que sean años.
+        Ame pasar esos dias contigo, ame cada momento, cada lugar, cada ratito con mi niña preciosa, de verdad amo esos recuerdos contigo: el zoologico, el cine, ir por la pizza, quedarme sin qlo por las dos horas de viaje.
+        Pero valio la pena aunque sali toda fastidia valio la pena ya que fue contigo, te amo mucho mi niña.
+        <div class="placeholder-text"></div>
+      </div>
+      <div class="slideshow-wrap polaroid-rotate-1">
+        <div class="slideshow" id="slide-3">
+          <img src="foto5.jpeg" alt="Foto 5" class="active">
+          <img src="foto6.jpeg" alt="Foto 6">
+        </div>
+        <div class="slide-date">Bonito recuerdo</div>
+        <div class="photo-notice">Amo tocar tu manita y estar contigo</div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<footer>Con amor Ana Bananita ♥</footer>
+ 
+<!--
+  ARCHIVOS NECESARIOS EN LA MISMA CARPETA:
+    snoopy1.gif  ← Snoopy con corazón
+    snoopy2.gif  ← Snoopy con porras (NUEVO)
+    snoopy3.gif  ← Snoopy bailando corazones
+    snoopy4.gif  ← Snoopy con Woodstock
+-->
+<div class="snoopy-container">
+  <div class="snoopy snoopy-1">
+    <img src="snoopy1.gif" alt="Snoopy">
+  </div>
+  <div class="snoopy snoopy-2">
+    <img src="snoopy2 (1).gif" alt="Snoopy">
+  </div>
+  <div class="snoopy snoopy-3">
+    <img src="snoopy3.gif" alt="Snoopy">
+  </div>
+  <div class="snoopy snoopy-4">
+    <img src="snoopy4.gif" alt="Snoopy">
+  </div>
+</div>
+ 
+<script>
+let playing = false;
+const audio = document.getElementById('bg-audio');
+const btn   = document.getElementById('play-btn');
+ 
+function toggleMusic() {
+  if (playing) {
+    audio.pause();
+    btn.textContent = '▶';
+  } else {
+    audio.play().catch(() => {
+      alert('No se pudo reproducir. Verifica que el link del MP3 sea directo.');
+    });
+    btn.textContent = '⏸';
+  }
+  playing = !playing;
+}
+ 
+function initSlideshow(id, ms) {
+  const c = document.getElementById(id);
+  if (!c) return;
+  const imgs = c.querySelectorAll('img');
+  if (imgs.length < 2) return;
+  let cur = 0;
+  setInterval(() => {
+    imgs[cur].classList.remove('active');
+    cur = (cur + 1) % imgs.length;
+    imgs[cur].classList.add('active');
+  }, ms);
+}
+ 
+initSlideshow('slide-1', 3000);
+initSlideshow('slide-2', 4000);
+initSlideshow('slide-3', 3500);
+</script>
+ 
+</body>
+</html>
